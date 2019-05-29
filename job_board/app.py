@@ -23,6 +23,15 @@ class JobSearchQuery:
     return self._jobLocation
 
 
+class JobListing:
+  def __init__(self):
+    self.jobTitle = None
+    self.jobURL = None
+    self.company = None
+    self.companyURL = None
+    self.jobDescription = None
+
+
 class JobSiteParser:
   def __init__(self):
     self.currentPage = None
@@ -57,6 +66,7 @@ class IndeedParser(JobSiteParser):
       'q': jobSearchQuery.getJobTitle(),
       'l': jobSearchQuery.getJobLocation()
     }
+    self.jobListings = []
 
   @property
   def searchURL(self):
@@ -66,7 +76,8 @@ class IndeedParser(JobSiteParser):
     jobListings = self.pageParser.find_all('a', attrs={'data-tn-element': 'jobTitle'})
 
     for jobListing in jobListings:
-      self.getJobListingInfo(urljoin(self.URL, jobListing['href']))
+      jobListing = self.getJobListingInfo(urljoin(self.URL, jobListing['href']))
+      self.jobListings.append(jobListing)
 
       # print(jobListing.text)
       # print(jobListing['href'])
@@ -74,11 +85,26 @@ class IndeedParser(JobSiteParser):
 
     # return jobListings
 
-  def getJobListingInfo(page):
+  def getJobListingInfo(self, pageURL):
     """
     Grab all data from a job listing page
     """
-    pass
+    jobListingResponse = self.getPage(pageURL)
+    self.setPage(jobListingResponse)
+    self.setParser()
+
+    jobListing = JobListing()
+    jobListing.jobTitle = self.pageParser.find('h3').text
+    jobListing.jobURL = pageURL
+
+    companyRatingInfoDiv = self.pageParser.find('div', attrs={'class': 'jobsearch-InlineCompanyRating'})
+    companyNameDiv = companyRatingInfoDiv.find('div')
+
+    jobListing.company = companyNameDiv.find('a').text
+    jobListing.companyURL = companyNameDiv.find('a')['href']
+    jobListing.jobDescription = self.pageParser.find('div', attrs={'id': 'jobDescriptionText'}).text
+
+    return jobListing
 
   def parse(self):
     pass
