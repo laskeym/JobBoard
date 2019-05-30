@@ -2,7 +2,8 @@ import pytest
 
 from urllib.parse import urljoin
 
-from job_board.app import JobSearchQuery, IndeedParser
+from job_board.resources.JobSearchQuery import JobSearchQuery
+from job_board.resources.JobParsers.IndeedParser import IndeedParser
 
 def test_indeed_page_connection():
   jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
@@ -27,23 +28,7 @@ def test_set_page():
 
   assert ip.currentPage is not None
 
-def test_get_job_listing_info():
-  jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
-  ip = IndeedParser(jsq)
-
-  indeedPageResponse = ip.getPage(ip.searchURL, ip.urlParams)
-  ip.setPage(indeedPageResponse)
-  ip.setParser()
-
-  jli = ip.getJobListingInfo('https://www.indeed.com/viewjob?jk=a4ea943f7d845f85&tk=1dc0mhnd70gep002&from=serp&vjs=3')
-
-  assert jli.jobTitle is not None
-  assert jli.jobURL is not None
-  assert jli.company is not None
-  assert jli.companyURL is not None
-  assert jli.jobDescription is not None
-
-# def test_get_job_listings():
+# def test_get_job_listing_info():
 #   jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
 #   ip = IndeedParser(jsq)
 
@@ -51,20 +36,10 @@ def test_get_job_listing_info():
 #   ip.setPage(indeedPageResponse)
 #   ip.setParser()
 
-#   ip.getJobListings()
+#   jli = ip.getJobListingInfo('https://www.indeed.com/viewjob?jk=a4ea943f7d845f85&tk=1dc0mhnd70gep002&from=serp&vjs=3')
 
-#   assert len(ip.jobListings) > 0
-
-# def test_job_listing_page():
-#   jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
-#   ip = IndeedParser(jsq)
-
-#   indeedPageResponse = ip.getPage(ip.searchURL, ip.urlParams)
-#   ip.setPage(indeedPageResponse)
-#   ip.setParser()
-
-#   jobListings = ip.getJobListings()
-
-#   jobListingResponse = ip.getPage(urljoin(ip.URL, jobListings[0]['href']))
-
-#   assert jobListingResponse.ok
+#   assert jli.jobTitle is not None
+#   assert jli.jobURL is not None
+#   assert jli.jobDescription is not None
+#   assert jli.companyName is not None
+#   assert jli.jobDescription is not None
