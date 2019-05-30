@@ -3,8 +3,10 @@ class JobSearchQuery:
     self._jobTitle = jobTitle
     self._jobLocation = jobLocation 
 
-  def displayJobSearchQuery(self):
+  def getJobSearchQuery(self):
     message = 'Searching for {jT} jobs in {jL}'.format(jT=self._jobTitle, jL=self._jobLocation)
+
+    return message
 
   def getJobTitle(self):
     return self._jobTitle
