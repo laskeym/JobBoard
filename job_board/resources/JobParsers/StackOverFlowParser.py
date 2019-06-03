@@ -28,20 +28,17 @@ class StackOverflowParser(JobSiteParser):
       self.jobListings.append(jobListing)
 
   def getJobListingInfo(self, pageURL):
-    jobListingPage = self.getPage(pageURL)
-    self.setPage(jobListingPage)
-    self.setParser()
+    super().getJobListingInfo(pageURL) 
 
-    jobListing = JobListing()
-    jobListing.jobTitle = self.pageParser.find('a', attrs={'class': 'fc-black-900'}).text
-    jobListing.jobURL = pageURL
+    self.jobListing.jobTitle = self.pageParser.find('a', attrs={'class': 'fc-black-900'}).text
+    self.jobListing.jobURL = pageURL
 
     companyInfo = self.pageParser.find('a', attrs={'class': ['fc-black-700', 'fc-black-800']})
-    jobListing.companyName = companyInfo.text
-    jobListing.companyURL = companyInfo.get('href')
+    self.jobListing.companyName = companyInfo.text
+    self.jobListing.companyURL = companyInfo.get('href')
 
     jobDescriptionExtract = self.pageParser.find('div', {'id': 'overview-items'})
     jobDescriptionExtract = jobDescriptionExtract.find_all('section')[2].text
-    jobListing.jobDescription = jobDescriptionExtract
+    self.jobListing.jobDescription = jobDescriptionExtract
     
-    return jobListing
+    return self.jobListing

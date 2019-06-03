@@ -5,28 +5,32 @@ from urllib.parse import urljoin
 from job_board.resources.JobSearchQuery import JobSearchQuery
 from job_board.resources.JobParsers.IndeedParser import IndeedParser
 
-def test_indeed_page_connection():
-  jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
-  ip = IndeedParser(jsq)
+"""
+INDEED PARSER CURRENTLY NOT BEING USED.
+"""
 
-  indeedPageResponse = ip.getPage(ip.searchURL, ip.urlParams)
+# def test_indeed_page_connection():
+#   jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
+#   ip = IndeedParser(jsq)
 
-  assert indeedPageResponse.ok
+#   indeedPageResponse = ip.getPage(ip.searchURL, ip.urlParams)
 
-def test_indeed_search_url():
-  jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
-  ip = IndeedParser(jsq)
+#   assert indeedPageResponse.ok
 
-  assert ip.searchURL == 'https://www.indeed.com/jobs'
+# def test_indeed_search_url():
+#   jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
+#   ip = IndeedParser(jsq)
 
-def test_set_page():
-  jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
-  ip = IndeedParser(jsq)
+#   assert ip.searchURL == 'https://www.indeed.com/jobs'
 
-  indeedPageResponse = ip.getPage(ip.searchURL, ip.urlParams)
-  ip.setPage(indeedPageResponse)
+# def test_set_page():
+#   jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
+#   ip = IndeedParser(jsq)
 
-  assert ip.currentPage is not None
+#   indeedPageResponse = ip.getPage(ip.searchURL, ip.urlParams)
+#   ip.setPage(indeedPageResponse)
+
+#   assert ip.currentPage is not None
 
 # def test_get_job_listing_info():
 #   jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')

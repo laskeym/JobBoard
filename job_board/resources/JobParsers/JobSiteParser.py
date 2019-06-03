@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
+from job_board.resources.JobListing import JobListing
+
 
 class JobSiteParser:
   def __init__(self):
@@ -23,3 +25,10 @@ class JobSiteParser:
 
   def getJobListings(self):
     pass
+
+  def getJobListingInfo(self, pageURL):
+    jobListingPage = self.getPage(pageURL)
+    self.setPage(jobListingPage)
+    self.setParser()
+
+    self.jobListing = JobListing()
