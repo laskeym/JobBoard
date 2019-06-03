@@ -1,5 +1,6 @@
 notes.rst
 __pycache__
 .pytest_cache
+.coverage
 .vscode
 /venv
