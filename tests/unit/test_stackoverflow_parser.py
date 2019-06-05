@@ -46,6 +46,7 @@ def test_get_job_listings_mock(mock_get, stack_overflow_parser):
   assert len(stack_overflow_parser.jobListings) == 3
   assert stack_overflow_parser.jobListings[0].jobTitle is not None
 
+@pytest.mark.live
 def test_get_job_listings_live():
   print('\n')
   print('LIVE TEST: StackOverflow connectivity and job search')

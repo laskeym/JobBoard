@@ -1,0 +1,46 @@
+from urllib.parse import urljoin
+from bs4 import BeautifulSoup
+import re
+
+from job_board.resources.JobListing import JobListing
+from job_board.resources.JobParsers.JobSiteParser import JobSiteParser
+
+
+class MonsterParser(JobSiteParser):
+  def __init__(self, jobSearchQuery):
+    super(MonsterParser, self).__init__()
+
+    self.URL = 'https://www.monster.com'
+    self.urlParams = {
+      'q': jobSearchQuery.getJobTitle(),
+      'where': jobSearchQuery.getJobLocation()
+    }
+    self.jobListings = []
+
+  @property
+  def searchURL(self):
+    return urljoin(self.URL, 'jobs/search')
+
+  def getJobListings(self):
+    jobListings = self.pageParser.find_all('div', attrs={'class': 'summary'})
+
+    for jobListing in jobListings:
+      jobListingURL = jobListing.find('a').get('href')
+      jobListing = self.getJobListingInfo(jobListingURL)
+      self.jobListings.append(jobListing)
+
+  def getJobListingInfo(self, pageURL):
+    super().getJobListingInfo(pageURL)
+
+    if self.jobListing:
+      infoDiv = self.pageParser.find('h1', attrs={'class': 'title'})
+      infoDivCleansed = re.split('at | from', infoDiv.text.strip())
+
+      # The mock getJobListingInfo test fails due to a white space in the job title header.  Look into this more.
+      self.jobListing.jobTitle = infoDivCleansed[0].strip()
+      self.jobListing.jobURL = pageURL
+      self.jobListing.companyName = infoDivCleansed[1]
+
+      self.jobListing.jobDescription = self.pageParser.find('div', attrs={'class': 'details-content'}).text
+
+      return self.jobListing

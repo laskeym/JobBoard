@@ -1,6 +1,9 @@
+import random
+
 import requests
 from bs4 import BeautifulSoup
 
+from job_board.utilities.getProxies import getProxies
 from job_board.resources.JobListing import JobListing
 
 
@@ -8,9 +11,14 @@ class JobSiteParser:
   def __init__(self):
     self.currentPage = None
     self.pageParser = None
+    self.proxies = list(getProxies())
 
   def getPage(self, pageURL, params=None):
-    response = requests.get(pageURL, params=params)
+    headers = {
+      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'
+    }
+
+    response = requests.get(pageURL, params=params, headers=headers)
 
     if response.ok:
       return response
@@ -28,7 +36,9 @@ class JobSiteParser:
 
   def getJobListingInfo(self, pageURL):
     jobListingPage = self.getPage(pageURL)
-    self.setPage(jobListingPage)
-    self.setParser()
 
-    self.jobListing = JobListing()
+    if jobListingPage is not None:
+      self.setPage(jobListingPage)
+      self.setParser()
+
+      self.jobListing = JobListing()
