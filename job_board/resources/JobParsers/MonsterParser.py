@@ -22,15 +22,23 @@ class MonsterParser(JobSiteParser):
     return urljoin(self.URL, 'jobs/search')
 
   def getJobListings(self):
+    jobListingsPage = self.getPage(self.searchURL, self.urlParams)
+    self.setPage(jobListingsPage)
+    self.setParser()
+    self.parseJobListings()
+
+    return self.jobListings
+
+  def parseJobListings(self):
     jobListings = self.pageParser.find_all('div', attrs={'class': 'summary'})
 
     for jobListing in jobListings:
       jobListingURL = jobListing.find('a').get('href')
-      jobListing = self.getJobListingInfo(jobListingURL)
+      jobListing = self.parseJobListingInfo(jobListingURL)
       self.jobListings.append(jobListing)
 
-  def getJobListingInfo(self, pageURL):
-    super().getJobListingInfo(pageURL)
+  def parseJobListingInfo(self, pageURL):
+    super().parseJobListingInfo(pageURL)
 
     if self.jobListing:
       infoDiv = self.pageParser.find('h1', attrs={'class': 'title'})

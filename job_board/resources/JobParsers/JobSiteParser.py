@@ -31,10 +31,10 @@ class JobSiteParser:
   def setParser(self, parser='lxml'):
     self.pageParser = BeautifulSoup(self.currentPage.content, parser)
 
-  def getJobListings(self):
+  def parseJobListings(self):
     pass
 
-  def getJobListingInfo(self, pageURL):
+  def parseJobListingInfo(self, pageURL):
     jobListingPage = self.getPage(pageURL)
 
     if jobListingPage is not None:

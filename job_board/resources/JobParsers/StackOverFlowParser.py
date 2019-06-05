@@ -21,14 +21,22 @@ class StackOverflowParser(JobSiteParser):
     return urljoin(self.URL, 'jobs')
 
   def getJobListings(self):
+    jobListingsPage = self.getPage(self.searchURL, self.urlParams)
+    self.setPage(jobListingsPage)
+    self.setParser()
+    self.parseJobListings()
+
+    return self.jobListings
+
+  def parseJobListings(self):
     jobListings = self.pageParser.find_all('a', attrs={'class': 's-link s-link__visited'})
 
     for jobListing in jobListings:
-      jobListing = self.getJobListingInfo(urljoin(self.URL, jobListing['href']))
+      jobListing = self.parseJobListingInfo(urljoin(self.URL, jobListing['href']))
       self.jobListings.append(jobListing)
 
-  def getJobListingInfo(self, pageURL):
-    super().getJobListingInfo(pageURL) 
+  def parseJobListingInfo(self, pageURL):
+    super().parseJobListingInfo(pageURL) 
 
     self.jobListing.jobTitle = self.pageParser.find('a', attrs={'class': 'fc-black-900'}).text
     self.jobListing.jobURL = pageURL

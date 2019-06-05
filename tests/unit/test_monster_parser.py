@@ -25,10 +25,10 @@ def monster_parser():
   return monsterParser
 
 @patch('job_board.resources.JobParsers.JobSiteParser.requests.get')
-def test_get_job_listing_info(mock_get, monster_parser):
+def test_parse_job_listing_info(mock_get, monster_parser):
   mock_get.return_value = mocked_requests_get('https://www.monster.com/jobs/search')
 
-  jobListing = monster_parser.getJobListingInfo(mockJobListingURL)
+  jobListing = monster_parser.parseJobListingInfo(mockJobListingURL)
 
   assert jobListing.jobTitle == 'Software Developer'
   assert jobListing.companyName == 'ABC Corp.'
@@ -36,29 +36,26 @@ def test_get_job_listing_info(mock_get, monster_parser):
   assert jobListing.jobDescription != ''
   
 @patch('job_board.resources.JobParsers.JobSiteParser.requests.get')
-def test_get_job_listings_mock(mock_get, monster_parser):
+def test_parse_job_listings_mock(mock_get, monster_parser):
   mock_get.return_value = mocked_requests_get(urljoin(mockJobListingURL, 'jobs/search'))
 
   jobListingsPage = mocked_requests_get(mockJobListingURL)
   monster_parser.setPage(jobListingsPage)
   monster_parser.setParser()
-  monster_parser.getJobListings()
+
+  monster_parser.parseJobListings()
 
   assert len(monster_parser.jobListings) == 4
   assert monster_parser.jobListings[0].jobTitle is not None
 
+def test_get_job_listins_mock():
+  pass
+
 @pytest.mark.live
-def test_get_job_listings_live():
+def test_get_job_listings_live(monster_parser):
   print('\n')
   print('LIVE TEST: Monster connectivity and job search')
 
-  jsq = JobSearchQuery('Software Developer', 'Fairfield, NJ')
-  sop = MonsterParser(jsq)
+  monster_parser.getJobListings()
 
-  MonsterPageResponse = sop.getPage(sop.searchURL, sop.urlParams)
-  sop.setPage(MonsterPageResponse)
-  sop.setParser()
-
-  sop.getJobListings()
-
-  assert len(sop.jobListings) > 0
+  assert len(monster_parser.jobListings) > 0
