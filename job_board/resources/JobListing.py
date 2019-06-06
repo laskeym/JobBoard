@@ -4,4 +4,5 @@ class JobListing:
     self.jobURL = None
     self.companyName = None
     self.companyURL = None
+    self.postDate = None
     self.jobDescription = None

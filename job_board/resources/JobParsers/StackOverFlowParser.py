@@ -1,3 +1,7 @@
+import re
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 
@@ -29,11 +33,15 @@ class StackOverflowParser(JobSiteParser):
     return self.jobListings
 
   def parseJobListings(self):
-    jobListings = self.pageParser.find_all('a', attrs={'class': 's-link s-link__visited'})
+    jobListingsURL = self.pageParser.find_all('a', attrs={'class': 's-link s-link__visited'})
+    jobListingsPostDate = self.pageParser.find_all('span', attrs={'class': 'ps-absolute pt2 r0 fc-black-500 fs-body1 pr12 t32'})
+
+    jobListings = list(zip(jobListingsURL, jobListingsPostDate))
 
     for jobListing in jobListings:
-      jobListing = self.parseJobListingInfo(urljoin(self.URL, jobListing['href']))
-      self.jobListings.append(jobListing)
+      jobListingObj = self.parseJobListingInfo(urljoin(self.URL, jobListing[0]['href']))
+      jobListingObj.postDate = self.timeParser(jobListing[1].text)
+      self.jobListings.append(jobListingObj)
 
   def parseJobListingInfo(self, pageURL):
     super().parseJobListingInfo(pageURL) 
@@ -50,3 +58,32 @@ class StackOverflowParser(JobSiteParser):
     self.jobListing.jobDescription = jobDescriptionExtract
     
     return self.jobListing
+
+  def timeParser(self, timeString):
+    """
+    Convert a time string such as '12d ago' to a datetime object
+    """
+    # print(timeString)
+
+    dateIntervalMapping = {
+      'h': 'hours',
+      'd': 'days',
+      'w': 'weeks',
+      'm': 'months'
+    }
+
+    dtPattern1 = '(\d+)\w{1}'
+    dtPattern2 = '(\d+)'
+
+    dt = re.search(dtPattern1, timeString)
+    dt = re.split(dtPattern2, dt.group(0))
+    dt = list(filter(None, dt))
+
+    dtInterval = dateIntervalMapping[dt[1]]
+    dtDict = {
+      dtInterval: -int(dt[0])
+    }
+
+    dt = datetime.now() + relativedelta(**dtDict)
+
+    return dt

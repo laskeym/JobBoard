@@ -20,12 +20,7 @@ def search():
   jobSearchQuery = JobSearchQuery(query, location)
 
   stackOverflow = StackOverflowParser(jobSearchQuery)
-  stackOverflowPage = stackOverflow.getPage(stackOverflow.searchURL, stackOverflow.urlParams)
-  stackOverflow.setPage(stackOverflowPage)
-  stackOverflow.setParser()
-  
-  stackOverflow.getJobListings()
-  jobListings.extend(stackOverflow.jobListings)
+  jobListings.extend(stackOverflow.getJobListings())
 
   monster = MonsterParser(jobSearchQuery)
   jobListings.extend(monster.getJobListings())
