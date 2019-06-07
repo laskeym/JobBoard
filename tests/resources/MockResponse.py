@@ -14,8 +14,8 @@ def getTestHTMLPage(file_path):
 mockStackOverflowJobListingsFile = os.getcwd() + '/tests/resources/testHTMLPages/StackOverflow/jobListingsPage.html'
 mockStackOverflowJobListings = getTestHTMLPage(mockStackOverflowJobListingsFile)
 
-mockStackOverflowJobInfoFile = os.getcwd() + '/tests/resources/testHTMLPages/StackOverflow/jobListingInfoPage.html'
-mockStackOverflowJobInfo = getTestHTMLPage(mockStackOverflowJobInfoFile)
+mockStackOverflowJobListingFile = os.getcwd() + '/tests/resources/testHTMLPages/StackOverflow/jobListing.html'
+mockStackOverflowJobInfo = getTestHTMLPage(mockStackOverflowJobListingFile)
 
 mockMonsterJobListingsFile = os.getcwd() + '/tests/resources/testHTMLPages/Monster/jobListingsPage.html'
 mockMonsterJobListings = getTestHTMLPage(mockMonsterJobListingsFile)

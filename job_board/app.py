@@ -25,4 +25,7 @@ def search():
   monster = MonsterParser(jobSearchQuery)
   jobListings.extend(monster.getJobListings())
 
+  # Sort job listings by post date
+  jobListings.sort(key=lambda jobListing: jobListing.postDate)
+
   return render_template('search_results.html', jobListings=jobListings)

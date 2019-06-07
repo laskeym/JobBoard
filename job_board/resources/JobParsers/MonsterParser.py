@@ -5,6 +5,12 @@ import re
 from job_board.resources.JobListing import JobListing
 from job_board.resources.JobParsers.JobSiteParser import JobSiteParser
 
+#######################################################################
+#                               NOTES                                  #
+#######################################################################
+# We could most likely break out some of the functionlity into         #
+# smaller functions                                                    #
+#######################################################################
 
 class MonsterParser(JobSiteParser):
   def __init__(self, jobSearchQuery):
@@ -22,6 +28,7 @@ class MonsterParser(JobSiteParser):
     return urljoin(self.URL, 'jobs/search')
 
   def getJobListings(self):
+    # This could be consolidated to the JobSiteParser parent class by moving URL and urlParms.
     jobListingsPage = self.getPage(self.searchURL, self.urlParams)
     self.setPage(jobListingsPage)
     self.setParser()
@@ -40,6 +47,7 @@ class MonsterParser(JobSiteParser):
   def parseJobListingInfo(self, pageURL):
     super().parseJobListingInfo(pageURL)
 
+    # This should now be handled by non 202 status code exception
     if self.jobListing:
       infoDiv = self.pageParser.find('h1', attrs={'class': 'title'})
       infoDivCleansed = re.split('at | from', infoDiv.text.strip())

@@ -50,14 +50,14 @@ def test_parse_job_listings_mock(mock_get, monster_parser):
 def test_get_job_listings_mock():
   pass
 
-@pytest.mark.live
-def test_get_job_listings_live(monster_parser):
-  print('\n')
-  print('LIVE TEST: Monster connectivity and job search')
+# @pytest.mark.live
+# def test_get_job_listings_live(monster_parser):
+#   print('\n')
+#   print('LIVE TEST: Monster connectivity and job search')
 
-  monster_parser.getJobListings()
+#   monster_parser.getJobListings()
 
-  assert len(monster_parser.jobListings) > 0
+#   assert len(monster_parser.jobListings) > 0
 
 @patch('job_board.resources.JobParsers.JobSiteParser.requests.get')
 def test_time_parser(mock_get, monster_parser):

@@ -3,6 +3,6 @@ class JobListing:
     self.jobTitle = None
     self.jobURL = None
     self.companyName = None
-    self.companyURL = None
+    self.jobLocation = None
     self.postDate = None
     self.jobDescription = None

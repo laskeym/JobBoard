@@ -25,46 +25,43 @@ class StackOverflowParser(JobSiteParser):
     return urljoin(self.URL, 'jobs')
 
   def getJobListings(self):
-    jobListingsPage = self.getPage(self.searchURL, self.urlParams)
-    self.setPage(jobListingsPage)
-    self.setParser()
-    self.parseJobListings()
+    self.setUpPage()
+    jobListingsContent = self.pageParser.find_all('div', attrs={'class': '-job-summary'})
+
+    self.parseJobListings(jobListingsContent)
 
     return self.jobListings
 
-  def parseJobListings(self):
-    jobListingsURL = self.pageParser.find_all('a', attrs={'class': 's-link s-link__visited'})
-    jobListingsPostDate = self.pageParser.find_all('span', attrs={'class': 'ps-absolute pt2 r0 fc-black-500 fs-body1 pr12 t32'})
+  def setUpPage(self):
+    jobListingsPage = self.getPage(self.searchURL, self.urlParams)
+    self.setPage(jobListingsPage)
+    self.setParser()
 
-    jobListings = list(zip(jobListingsURL, jobListingsPostDate))
-
+  def parseJobListings(self, jobListings):
     for jobListing in jobListings:
-      jobListingObj = self.parseJobListingInfo(urljoin(self.URL, jobListing[0]['href']))
-      jobListingObj.postDate = self.timeParser(jobListing[1].text)
-      self.jobListings.append(jobListingObj)
+      self.jobListings.append(self.createJobListing(jobListing))
 
-  def parseJobListingInfo(self, pageURL):
-    super().parseJobListingInfo(pageURL) 
+  def createJobListing(self, jobListing):
+    jobListingObj = JobListing()
 
-    self.jobListing.jobTitle = self.pageParser.find('a', attrs={'class': 'fc-black-900'}).text
-    self.jobListing.jobURL = pageURL
+    jobHeaderInfo = jobListing.find('div', attrs={'class': '-title'})
+    jobListingObj.jobTitle = jobHeaderInfo.find('a').text
+    jobListingObj.jobURL = urljoin(self.URL, jobHeaderInfo.find('a').get('href'))
 
-    companyInfo = self.pageParser.find('a', attrs={'class': ['fc-black-700', 'fc-black-800']})
-    self.jobListing.companyName = companyInfo.text
-    self.jobListing.companyURL = companyInfo.get('href')
+    secondaryInfo = jobListing.find('div', attrs={'class': '-company'})
+    jobListingObj.companyName = secondaryInfo.find('span').text
+    jobListingObj.jobLocation = secondaryInfo.find('span', attrs={'class': 'fc-black-500'}).text
 
-    jobDescriptionExtract = self.pageParser.find('div', {'id': 'overview-items'})
-    jobDescriptionExtract = jobDescriptionExtract.find_all('section')[2].text
-    self.jobListing.jobDescription = jobDescriptionExtract
-    
-    return self.jobListing
+    postedDateRaw = jobHeaderInfo.find('span', attrs={'class': 'fc-black-500'}).text
+    jobListingObj.postedDate = self.timeParser(postedDateRaw)
 
+    return jobListingObj
+
+  # Might break off into its own class since multiple parsers need this and are special cases. 
   def timeParser(self, timeString):
     """
     Convert a time string such as '12d ago' to a datetime object
     """
-    # print(timeString)
-
     dateIntervalMapping = {
       'h': 'hours',
       'd': 'days',
