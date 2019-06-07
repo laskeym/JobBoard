@@ -1,9 +1,11 @@
-from urllib.parse import urljoin
-from bs4 import BeautifulSoup
 import re
+import datetime
+from dateutil.relativedelta import relativedelta
+from urllib.parse import urljoin
 
 from job_board.resources.JobListing import JobListing
 from job_board.resources.JobParsers.JobSiteParser import JobSiteParser
+from job_board.resources.Error import ResponseNotOKError
 
 #######################################################################
 #                               NOTES                                  #
@@ -28,35 +30,55 @@ class MonsterParser(JobSiteParser):
     return urljoin(self.URL, 'jobs/search')
 
   def getJobListings(self):
-    # This could be consolidated to the JobSiteParser parent class by moving URL and urlParms.
-    jobListingsPage = self.getPage(self.searchURL, self.urlParams)
-    self.setPage(jobListingsPage)
-    self.setParser()
-    self.parseJobListings()
+    self.setUpPage()
+    jobListingsContent = self.pageParser.find_all('section', attrs={'class': 'card-content', 'data-jobid': re.compile(r'(\d+)')})
+    self.parseJobListings(jobListingsContent)
 
     return self.jobListings
 
-  def parseJobListings(self):
-    jobListings = self.pageParser.find_all('div', attrs={'class': 'summary'})
+  def setUpPage(self):
+    try:
+      jobListingsPage = self.getPage(self.searchURL, self.urlParams)
+    except ResponseNotOKError as err:
+      err.printError()
+      return 0
+    
+    self.setPage(jobListingsPage)
+    self.setParser()
 
+  def parseJobListings(self, jobListings):
     for jobListing in jobListings:
-      jobListingURL = jobListing.find('a').get('href')
-      jobListing = self.parseJobListingInfo(jobListingURL)
-      self.jobListings.append(jobListing)
+      self.jobListings.append(self.createJobListing(jobListing))
 
-  def parseJobListingInfo(self, pageURL):
-    super().parseJobListingInfo(pageURL)
+  def createJobListing(self, jobListing):
+    jobListingObj = JobListing()
 
-    # This should now be handled by non 202 status code exception
-    if self.jobListing:
-      infoDiv = self.pageParser.find('h1', attrs={'class': 'title'})
-      infoDivCleansed = re.split('at | from', infoDiv.text.strip())
+    jobListingObj.jobTitle = jobListing.find('a').text
+    jobListingObj.jobURL = jobListing.find('a').get('href')
+    jobListingObj.companyName = jobListing.find('div', attrs={'class': 'company'}).text.strip()
+    jobListingObj.jobLocation = jobListing.find('div', attrs={'class': 'location'}).text.strip()
 
-      # The mock getJobListingInfo test fails due to a white space in the job title header.  Look into this more.
-      self.jobListing.jobTitle = infoDivCleansed[0].strip()
-      self.jobListing.jobURL = pageURL
-      self.jobListing.companyName = infoDivCleansed[1]
+    postDateRaw = jobListing.find('time').text
+    jobListingObj.postDate = self.timeParser(postDateRaw)
 
-      self.jobListing.jobDescription = self.pageParser.find('div', attrs={'class': 'details-content'}).text
+    return jobListingObj
 
-      return self.jobListing
+  def timeParser(self, timeString):
+    datePattern = r'((\d+) day(s)?|today)'
+    dateSearch = re.search(datePattern, timeString)
+
+    dateListRaw = re.split('(\d+)', dateSearch.group(0))
+    dateListRaw = list(filter(None, dateListRaw))
+
+    if dateListRaw[0] == 'today':
+      dt = datetime.date.today()
+    else:
+      if dateListRaw[1].strip() == 'day':
+        dateListRaw[1] = 'days'
+
+      dateDict = {
+        dateListRaw[1].strip(): -int(dateListRaw[0])
+      }
+      dt = datetime.date.today() + relativedelta(**dateDict)
+
+    return dt

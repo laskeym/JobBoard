@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from job_board.resources.JobListing import JobListing
+from job_board.resources.Error import ResponseNotOKError
 
 
 class JobSiteParser:
@@ -15,8 +16,7 @@ class JobSiteParser:
     if response.ok:
       return response
     else:
-      # Throw ResponseNotOK exception along with page URL and status code
-      return None
+      raise ResponseNotOKError(pageURL, response.status_code)
 
   def setPage(self, page):
     self.currentPage = page
@@ -24,15 +24,8 @@ class JobSiteParser:
   def setParser(self, parser='lxml'):
     self.pageParser = BeautifulSoup(self.currentPage.content, parser)
 
-  def parseJobListings(self):
+  def parseJobListings(self, jobListings):
     pass
 
-  def parseJobListingInfo(self, pageURL):
-    jobListingPage = self.getPage(pageURL)
-
-    # This should now be handled by the above exception
-    if jobListingPage is not None:
-      self.setPage(jobListingPage)
-      self.setParser()
-
-      self.jobListing = JobListing()
+  def createJobListing(self, jobListing):
+    pass

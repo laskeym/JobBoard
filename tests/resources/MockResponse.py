@@ -20,13 +20,14 @@ mockStackOverflowJobInfo = getTestHTMLPage(mockStackOverflowJobListingFile)
 mockMonsterJobListingsFile = os.getcwd() + '/tests/resources/testHTMLPages/Monster/jobListingsPage.html'
 mockMonsterJobListings = getTestHTMLPage(mockMonsterJobListingsFile)
 
-mockMonsterJobInfoFile = os.getcwd() + '/tests/resources/testHTMLPages/Monster/jobListingInfoPage.html'
+mockMonsterJobInfoFile = os.getcwd() + '/tests/resources/testHTMLPages/Monster/jobListing.html'
 mockMonsterJobInfo = getTestHTMLPage(mockMonsterJobInfoFile)
 
 class MockResponse:
-  def __init__(self, content, ok=True):
+  def __init__(self, content, ok=True, status_code=200):
     self.content = content
     self.ok = ok
+    self.status_code = status_code
 
 def mocked_requests_get(*args, **kwargs):
   # StackOverflow

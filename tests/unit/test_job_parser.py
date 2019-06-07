@@ -2,6 +2,7 @@ from unittest.mock import patch
 import pytest
 
 from job_board.resources.JobParsers.JobSiteParser import JobSiteParser
+from job_board.resources.Error import ResponseNotOKError
 
 mockURL = 'https://www.indeed.com'
 
@@ -25,10 +26,13 @@ def test_getPage_function_OKResponse(mock_get, job_site_parser):
 @patch('job_board.resources.JobParsers.JobSiteParser.requests.get')
 def test_getPage_function_notOKResponse(mock_get, job_site_parser):
   mock_get.return_value.ok = False
+  mock_get.return_value.status_code = 404
 
-  page = job_site_parser.getPage(mockURL)
+  with pytest.raises(ResponseNotOKError) as err:
+    page = job_site_parser.getPage(mockURL)
 
-  assert page is None
+  assert err.errisinstance(ResponseNotOKError)
+  assert err.value.status_code == 404
 
 @patch('job_board.resources.JobParsers.JobSiteParser.requests.get')
 def test_setPage_function_page_set(mock_get, job_site_parser):

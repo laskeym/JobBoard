@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 from job_board.resources.JobListing import JobListing
 from job_board.resources.JobParsers.JobSiteParser import JobSiteParser
+from job_board.resources.Error import ResponseNotOKError
 
 
 class StackOverflowParser(JobSiteParser):
@@ -27,13 +28,18 @@ class StackOverflowParser(JobSiteParser):
   def getJobListings(self):
     self.setUpPage()
     jobListingsContent = self.pageParser.find_all('div', attrs={'class': '-job-summary'})
-
     self.parseJobListings(jobListingsContent)
 
     return self.jobListings
 
   def setUpPage(self):
-    jobListingsPage = self.getPage(self.searchURL, self.urlParams)
+    try:
+      jobListingsPage = self.getPage(self.searchURL, self.urlParams)
+    except ResponseNotOKError as err:
+      err.printError()
+      # Return something to indicate that the parser was not successful
+      return 0
+
     self.setPage(jobListingsPage)
     self.setParser()
 
@@ -52,8 +58,8 @@ class StackOverflowParser(JobSiteParser):
     jobListingObj.companyName = secondaryInfo.find('span').text
     jobListingObj.jobLocation = secondaryInfo.find('span', attrs={'class': 'fc-black-500'}).text
 
-    postedDateRaw = jobHeaderInfo.find('span', attrs={'class': 'fc-black-500'}).text
-    jobListingObj.postedDate = self.timeParser(postedDateRaw)
+    # postDateRaw = jobHeaderInfo.find('span', attrs={'class': 'fc-black-500'}).text
+    # jobListingObj.postedDate = self.timeParser(postDateRaw)
 
     return jobListingObj
 
