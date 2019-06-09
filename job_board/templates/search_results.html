@@ -11,7 +11,7 @@
     <div>
       <h2><a href="{{ jobListing.jobURL }}" target="_blank">{{ jobListing.jobTitle }}</a></h2>
 
-      <p>{{ jobListing.companyName }} <span style="padding-right: 2rem;">{{ jobListing.postDate }}</span></p>
+      <p>{{ jobListing.companyName }} <span style="padding-right: 2rem;">{{ jobListing.postDate.strftime("%b %d") }}</span></p>
     </div>
   {% endfor %}
 </body>

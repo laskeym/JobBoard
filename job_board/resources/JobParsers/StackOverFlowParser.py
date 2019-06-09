@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+import datetime
 from dateutil.relativedelta import relativedelta
 
 from urllib.parse import urljoin
@@ -58,15 +58,15 @@ class StackOverflowParser(JobSiteParser):
     jobListingObj.companyName = secondaryInfo.find('span').text
     jobListingObj.jobLocation = secondaryInfo.find('span', attrs={'class': 'fc-black-500'}).text
 
-    # postDateRaw = jobHeaderInfo.find('span', attrs={'class': 'fc-black-500'}).text
-    # jobListingObj.postedDate = self.timeParser(postDateRaw)
+    postDateRaw = jobHeaderInfo.find('span', attrs={'class': 'fc-black-500'}).text
+    jobListingObj.postDate = self.timeParser(postDateRaw)
 
     return jobListingObj
 
   # Might break off into its own class since multiple parsers need this and are special cases. 
   def timeParser(self, timeString):
     """
-    Convert a time string such as '12d ago' to a datetime object
+    Convert a time string such as '12d ago' to a datetime.date object
     """
     dateIntervalMapping = {
       'h': 'hours',
@@ -75,18 +75,22 @@ class StackOverflowParser(JobSiteParser):
       'm': 'months'
     }
 
-    dtPattern1 = '(\d+)\w{1}'
+    dtPattern1 = '(\d+)\w{1}|yesterday'
     dtPattern2 = '(\d+)'
 
     dt = re.search(dtPattern1, timeString)
-    dt = re.split(dtPattern2, dt.group(0))
-    dt = list(filter(None, dt))
+    if dt.group(0) == 'yesterday':
+      dtDict = {
+        dateIntervalMapping['d']: -1
+      }
+    else:
+      dt = re.split(dtPattern2, dt.group(0))
+      dt = list(filter(None, dt))
 
-    dtInterval = dateIntervalMapping[dt[1]]
-    dtDict = {
-      dtInterval: -int(dt[0])
-    }
+      dtInterval = dateIntervalMapping[dt[1]]
+      dtDict = {
+        dtInterval: -int(dt[0])
+      }
 
-    dt = datetime.now() + relativedelta(**dtDict)
-
+    dt = datetime.date.today() + relativedelta(**dtDict)
     return dt

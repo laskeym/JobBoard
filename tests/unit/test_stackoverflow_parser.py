@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+import datetime
 from dateutil.relativedelta import relativedelta
 
 from bs4 import BeautifulSoup
@@ -38,8 +38,8 @@ def test_create_job_listing(stack_overflow_parser):
   assert jobListing.companyName == 'ABC Company'
   assert jobListing.jobLocation == 'New York, NY'
 
-  datetimePattern = "%Y-%m-%d %H:%M:%S"
-  assert jobListing.postedDate.strftime(datetimePattern) == (datetime.now() + relativedelta(weeks=-2)).strftime(datetimePattern)
+  datetimePattern = "%Y-%m-%d"
+  assert jobListing.postDate.strftime(datetimePattern) == (datetime.date.today() + relativedelta(days=-1)).strftime(datetimePattern)
 
 def test_parse_job_listings(stack_overflow_parser):
   mockJobListingsPage = mocked_requests_get(mockJobListingURL)
@@ -58,19 +58,18 @@ def test_get_job_listings(mock_get, stack_overflow_parser):
 
   assert len(jobListings) == 3
 
-# @pytest.mark.live
-# def test_get_job_listings_live(stack_overflow_parser):
-#   """
-#   Currently fails if timeParser function is uncommented.  Need to account for 'yesterday' time frame when parsing.
-#   """
-#   stack_overflow_parser.getJobListings()
+@pytest.mark.live
+def test_get_job_listings_live(stack_overflow_parser):
+  print('\n')
+  print('-'*41)
+  print('STACKOVERFLOW GET JOB LISTINGS LIVE TEST')
+  print('-'*41)
 
-#   assert len(stack_overflow_parser.jobListings) > 0
+  stack_overflow_parser.getJobListings()
+
+  assert len(stack_overflow_parser.jobListings) > 0
   
 def test_time_parser(stack_overflow_parser):
-  # TODO:
-    # Account for 'yesterday'
-
   mockJobListingPage = mocked_requests_get(urljoin(mockJobListingURL, 'jobs'))
   
   jobListingParser = BeautifulSoup(mockJobListingPage.content, 'lxml')
@@ -80,4 +79,4 @@ def test_time_parser(stack_overflow_parser):
   parsedTime = stack_overflow_parser.timeParser(postedDateRaw)
 
   datetimePattern = "%Y-%m-%d %H:%M:%S"
-  assert parsedTime.strftime(datetimePattern) == (datetime.now() + relativedelta(weeks=-2)).strftime(datetimePattern)
+  assert parsedTime.strftime(datetimePattern) == (datetime.date.today() + relativedelta(days=-1)).strftime(datetimePattern)

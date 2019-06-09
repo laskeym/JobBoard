@@ -19,13 +19,13 @@ def search():
 
   jobSearchQuery = JobSearchQuery(query, location)
 
-  # stackOverflow = StackOverflowParser(jobSearchQuery)
-  # jobListings.extend(stackOverflow.getJobListings())
+  stackOverflow = StackOverflowParser(jobSearchQuery)
+  jobListings.extend(stackOverflow.getJobListings())
 
   monster = MonsterParser(jobSearchQuery)
   jobListings.extend(monster.getJobListings())
 
   # Sort job listings by post date
-  jobListings.sort(key=lambda jobListing: jobListing.postDate)
+  jobListings.sort(key=lambda jobListing: jobListing.postDate, reverse=True)
 
   return render_template('search_results.html', jobListings=jobListings)
