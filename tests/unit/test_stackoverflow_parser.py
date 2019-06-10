@@ -12,6 +12,7 @@ import pytest
 from job_board.resources.JobSearchQuery import JobSearchQuery
 from job_board.resources.JobListing import JobListing
 from job_board.resources.JobParsers.StackOverFlowParser import StackOverflowParser
+from job_board.utilities.dateParser import dateParserStackOverflow
 
 from tests.resources.MockResponse import mocked_requests_get
 
@@ -76,7 +77,7 @@ def test_time_parser(stack_overflow_parser):
   jobHeaderInfo = jobListingParser.find('div', attrs={'class': '-title'})
 
   postedDateRaw = jobHeaderInfo.find('span', attrs={'class': 'fc-black-500'}).text
-  parsedTime = stack_overflow_parser.timeParser(postedDateRaw)
+  parsedTime = dateParserStackOverflow(postedDateRaw)
 
   datetimePattern = "%Y-%m-%d %H:%M:%S"
   assert parsedTime.strftime(datetimePattern) == (datetime.date.today() + relativedelta(days=-1)).strftime(datetimePattern)

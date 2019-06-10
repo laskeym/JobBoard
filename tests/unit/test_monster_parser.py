@@ -12,6 +12,7 @@ import pytest
 from job_board.resources.JobSearchQuery import JobSearchQuery
 from job_board.resources.JobListing import JobListing
 from job_board.resources.JobParsers.MonsterParser import MonsterParser
+from job_board.utilities.dateParser import dateParserMonster
 
 from tests.resources.MockResponse import mocked_requests_get
 
@@ -74,6 +75,6 @@ def test_time_parser(monster_parser):
   jobListingParser = BeautifulSoup(mockJobListingPage.content, 'lxml')
 
   postDateRaw = jobListingParser.find('time').text
-  parsedDate = monster_parser.timeParser(postDateRaw)
+  parsedDate = dateParserMonster(postDateRaw)
 
   assert parsedDate == datetime.date.today() + relativedelta(days=-10)

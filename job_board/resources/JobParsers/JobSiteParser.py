@@ -9,6 +9,7 @@ class JobSiteParser:
   def __init__(self):
     self.currentPage = None
     self.pageParser = None
+    self.errors = None
 
   def getPage(self, pageURL, params=None):
     response = requests.get(pageURL, params=params)

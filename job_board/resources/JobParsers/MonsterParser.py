@@ -7,6 +7,8 @@ from job_board.resources.JobListing import JobListing
 from job_board.resources.JobParsers.JobSiteParser import JobSiteParser
 from job_board.resources.Error import ResponseNotOKError
 
+from job_board.utilities.dateParser import dateParserMonster
+
 #######################################################################
 #                               NOTES                                  #
 #######################################################################
@@ -59,26 +61,6 @@ class MonsterParser(JobSiteParser):
     jobListingObj.jobLocation = jobListing.find('div', attrs={'class': 'location'}).text.strip()
 
     postDateRaw = jobListing.find('time').text
-    jobListingObj.postDate = self.timeParser(postDateRaw)
+    jobListingObj.postDate = dateParserMonster(postDateRaw)
 
     return jobListingObj
-
-  def timeParser(self, timeString):
-    datePattern = r'((\d+) day(s)?|today)'
-    dateSearch = re.search(datePattern, timeString)
-
-    dateListRaw = re.split('(\d+)', dateSearch.group(0))
-    dateListRaw = list(filter(None, dateListRaw))
-
-    if dateListRaw[0] == 'today':
-      dt = datetime.date.today()
-    else:
-      if dateListRaw[1].strip() == 'day':
-        dateListRaw[1] = 'days'
-
-      dateDict = {
-        dateListRaw[1].strip(): -int(dateListRaw[0])
-      }
-      dt = datetime.date.today() + relativedelta(**dateDict)
-
-    return dt
