@@ -1,5 +1,5 @@
 import re
-import datetime
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from bs4 import BeautifulSoup
@@ -39,8 +39,8 @@ def test_create_job_listing(stack_overflow_parser):
   assert jobListing.companyName == 'ABC Company'
   assert jobListing.jobLocation == 'New York, NY'
 
-  datetimePattern = "%Y-%m-%d"
-  assert jobListing.postDate.strftime(datetimePattern) == (datetime.date.today() + relativedelta(days=-1)).strftime(datetimePattern)
+  datePattern = "%m/%d/%Y"
+  assert jobListing.postDate.strftime(datePattern) == (datetime.now() + relativedelta(days=-1)).strftime(datePattern)
 
 def test_parse_job_listings(stack_overflow_parser):
   mockJobListingsPage = mocked_requests_get(mockJobListingURL)
@@ -79,5 +79,5 @@ def test_time_parser(stack_overflow_parser):
   postedDateRaw = jobHeaderInfo.find('span', attrs={'class': 'fc-black-500'}).text
   parsedTime = dateParserStackOverflow(postedDateRaw)
 
-  datetimePattern = "%Y-%m-%d %H:%M:%S"
-  assert parsedTime.strftime(datetimePattern) == (datetime.date.today() + relativedelta(days=-1)).strftime(datetimePattern)
+  datePattern = "%m/%d/%Y"
+  assert parsedTime.strftime(datePattern) == (datetime.now() + relativedelta(days=-1)).strftime(datePattern)

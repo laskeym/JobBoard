@@ -34,13 +34,7 @@ class StackOverflowParser(JobSiteParser):
     return self.jobListings
 
   def setUpPage(self):
-    try:
-      jobListingsPage = self.getPage(self.searchURL, self.urlParams)
-    except ResponseNotOKError as err:
-      err.printError()
-      # Return something to indicate that the parser was not successful
-      return 0
-
+    jobListingsPage = self.getPage(self.searchURL, self.urlParams)
     self.setPage(jobListingsPage)
     self.setParser()
 

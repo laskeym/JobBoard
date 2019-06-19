@@ -1,28 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Job Board</title>
-</head>
-<body>
-  <h1>Job Board</h1>
+{% extends 'base.html' %}
 
-  <form method="POST" action="/search">
-    <div>
-      <label for="query">Keyword or Title:</label>
-      <input type="text" name="query">
-    </div>
+{% block style %}
+<style>
+  #app-description {
+    line-height: 2rem;
+  }
+</style>
+{% endblock %}
 
-    <div>
-      <label for="location">Location</label>
-      <input type="text" name="location">
+{% block body %}
+<div class="flex-fill">
+  <div class="row w-100 justify-content-center mt-5">
+    <div class="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
+      <div class="card py-2 px-1">
+        <div class="card-body">
+          <form action="{{ url_for('search') }}" method="POST" class="col-12">
+            <div class="form-group">
+              <label for="query">Job Title or Keyword</label>
+              <input type="text" class="form-control" name="query" autocomplete="off" placeholder="ex: Software Developer">
+            </div>
+            <div class="form-group">
+              <label for="location">Location</label>
+              <input type="text" class="form-control" name="location" id="location" placeholder="City, State, or Zip" autocomplete="off">
+            </div>
+            <button class="btn btn-primary btn-block mt-4">Find Jobs</button>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div>
-      <input type="submit" value="Find Jobs">
+  <div class="row w-100 mt-5" id="app-description">
+    <div class="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto pt-4 px-4 pb-0 border-top border-bottom">
+      <p class="lead text-muted">
+        Job Board is a job search web application with the core functionality of aggregating job listings across various sites.  This task is accomplished by using a web scraping combination of the requests and BeautifulSoup4 libraries.
+      </p>
+
+      <p class="text-muted">Currently the application only scrapes from StackOverflow and Monster, but is tailored to expand to other websites.</p>
+
+      <p class="text-muted text-right small">Visit the <a href="https://github.com/laskeym/JobBoard" target="_blank">Github</a> page</p>
     </div>
-  </form>
-</body>
-</html>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

@@ -8,8 +8,8 @@ Currently the application only scrapes from StackOverflow and Monster, but is ta
 
 * ~~Add a job date sort feature for job listings.  We can either take advantage of certain sites "sort" feature itself or just grab the results of a basic search and sort the result set.~~
 * Refactor and clean up code.  Make the code PEP8 compliant.
-* Implement error handling for response pages with a status code != 200
-* Expand basic UI a bit.
+* ~~Implement error handling for response pages with a status code != 200~~
+* ~~Expand basic UI a bit.~~
 * Implement multiprocessing
 
 ## Possible Features to Implement

@@ -12,6 +12,7 @@ class JobSiteParser:
     self.errors = None
 
   def getPage(self, pageURL, params=None):
+    # Should put this in a try catch in case of other errors
     response = requests.get(pageURL, params=params)
 
     if response.ok:

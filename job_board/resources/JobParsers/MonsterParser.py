@@ -5,16 +5,9 @@ from urllib.parse import urljoin
 
 from job_board.resources.JobListing import JobListing
 from job_board.resources.JobParsers.JobSiteParser import JobSiteParser
-from job_board.resources.Error import ResponseNotOKError
 
 from job_board.utilities.dateParser import dateParserMonster
 
-#######################################################################
-#                               NOTES                                  #
-#######################################################################
-# We could most likely break out some of the functionlity into         #
-# smaller functions                                                    #
-#######################################################################
 
 class MonsterParser(JobSiteParser):
   def __init__(self, jobSearchQuery):
@@ -25,6 +18,7 @@ class MonsterParser(JobSiteParser):
       'q': jobSearchQuery.getJobTitle(),
       'where': jobSearchQuery.getJobLocation()
     }
+
     self.jobListings = []
 
   @property
@@ -39,12 +33,7 @@ class MonsterParser(JobSiteParser):
     return self.jobListings
 
   def setUpPage(self):
-    try:
-      jobListingsPage = self.getPage(self.searchURL, self.urlParams)
-    except ResponseNotOKError as err:
-      err.printError()
-      return 0
-    
+    jobListingsPage = self.getPage(self.searchURL, self.urlParams)
     self.setPage(jobListingsPage)
     self.setParser()
 

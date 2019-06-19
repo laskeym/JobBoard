@@ -1,5 +1,5 @@
 import re
-import datetime
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
@@ -28,7 +28,7 @@ def createDateMonster(parsedDateList):
   }
   """
   if parsedDateList[0] == 'today':
-    dt = datetime.date.today()
+    dt = datetime.now()
   else:
     if parsedDateList[1].strip() == 'day':
       parsedDateList[1] = 'days'
@@ -36,7 +36,7 @@ def createDateMonster(parsedDateList):
     dateDict = {
       parsedDateList[1].strip(): -int(parsedDateList[0])
     }
-    dt = datetime.date.today() + relativedelta(**dateDict)
+    dt = datetime.now() + relativedelta(**dateDict)
   
   return dt
 
@@ -67,7 +67,7 @@ def createDateStackOverflow(dateExtract):
       dateIntervalMappingStackOverflow()[dt[1]]: -int(dt[0])
     }
 
-  dt = datetime.date.today() + relativedelta(**dateDict)
+  dt = datetime.now() + relativedelta(**dateDict)
 
   return dt
 

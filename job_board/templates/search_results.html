@@ -1,18 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-</head>
-<body>
-  {% for jobListing in jobListings %}
-    <div>
-      <h2><a href="{{ jobListing.jobURL }}" target="_blank">{{ jobListing.jobTitle }}</a></h2>
+{% extends 'base.html' %}
 
-      <p>{{ jobListing.companyName }} <span style="padding-right: 2rem;">{{ jobListing.postDate.strftime("%b %d") }}</span></p>
-    </div>
-  {% endfor %}
-</body>
-</html>
+{% block body %}
+
+{% if errors %}
+  <div class="row w-100">
+      <div class="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto p-0 pt-3">
+        <div class="alert alert-danger alert-dismissable fade show" role="alert">
+          <strong>The following errors have occurred:</strong>
+          <ul>
+            {% for error in errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+  </div>
+{% endif %}
+
+<div class="row w-100">
+  <div class="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto p-0 py-3">
+    Recent job listings for {{ jobSearchQuery.getJobTitle() }} in {{ jobSearchQuery.getJobLocation() }}
+  </div>
+</div>
+
+<div class="row flex-fill w-100 justify-content-center mb-2">
+  <div class="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-xs-12 h-100 mx-auto overflow-auto p-0">
+    <ul class="list-group job-listings">
+      {% for jobListing in jobListings %}
+        <a href="{{ jobListing.jobURL }}" target="_blank" class="job-url text-decoration-none text-dark">
+          <li class="list-group-item job-listing p-3">
+            <div class="job-listing-header">
+              <h2 class="job-title d-inline">{{ jobListing.jobTitle }}</h2>
+              <span class="posted-date float-right mt-1">
+                {{ jobListing.postDate.strftime("%b %d") }}
+              </span>
+            </div>
+  
+            <div class="company-name">
+              {{ jobListing.companyName }}
+            </div>
+  
+            <div class="job-location">
+              {{ jobListing.jobLocation }}
+            </div>
+          </li>
+        </a>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

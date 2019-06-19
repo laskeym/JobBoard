@@ -1,5 +1,5 @@
 import re
-import datetime
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from bs4 import BeautifulSoup
@@ -40,7 +40,8 @@ def test_create_job_listing(monster_parser):
   assert jobListing.companyName == 'Tech Solutions Inc'
   assert jobListing.jobLocation == 'Parsippany, NJ'
 
-  assert jobListing.postDate == datetime.date.today() + relativedelta(days=-10)
+  datePattern = "%m/%d/%Y"
+  assert jobListing.postDate.strftime(datePattern) == (datetime.now() + relativedelta(days=-10)).strftime(datePattern)
 
 def test_parse_job_listings(monster_parser):
   mockJobListingsPage = mocked_requests_get(mockJobListingURL)
@@ -77,4 +78,5 @@ def test_time_parser(monster_parser):
   postDateRaw = jobListingParser.find('time').text
   parsedDate = dateParserMonster(postDateRaw)
 
-  assert parsedDate == datetime.date.today() + relativedelta(days=-10)
+  datePattern = "%m/%d/%Y"
+  assert parsedDate.strftime(datePattern) == (datetime.now() + relativedelta(days=-10)).strftime(datePattern)
