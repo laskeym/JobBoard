@@ -10,6 +10,8 @@ Currently the application only scrapes from StackOverflow and Monster, but is ta
 * Refactor and clean up code.  Make the code PEP8 compliant.
 * ~~Implement error handling for response pages with a status code != 200~~
 * ~~Expand basic UI a bit.~~
+* Add basic private policy
+* Make job search page able to accept GET requests for instant search
 * Implement multiprocessing
 
 ## Possible Features to Implement
