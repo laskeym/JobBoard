@@ -7,9 +7,9 @@
   <title>Job Board</title>
 
   <!-- BOOTSTRAP v4.3.1 -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
 
-  {% block style %}
+  {% block head %}
   {% endblock %}
 </head>
 <body class="h-100">
@@ -36,7 +36,7 @@
   </div>
 
 
-  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
   {% block scripts %}
   {% endblock %}
 </body>

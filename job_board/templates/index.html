@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
-{% block style %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='jsAutoComplete/auto-complete.css') }}">
+
 <style>
   #app-description {
     line-height: 2rem;
@@ -51,4 +53,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='jsAutoComplete/auto-complete.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/locationAutoComplete.js') }}"></script>
 {% endblock %}

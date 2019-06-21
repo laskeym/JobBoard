@@ -1,12 +1,18 @@
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, url_for, jsonify
+from flask_cors import CORS, cross_origin
 from paginate import Page
+import requests
 
+from job_board.config import Config
 from job_board.resources.JobSearchQuery import JobSearchQuery
 from job_board.resources.JobParsers.StackOverFlowParser import StackOverflowParser
 from job_board.resources.JobParsers.MonsterParser import MonsterParser
 from job_board.resources.Error import ResponseNotOKError
 
 app = Flask(__name__)
+app.config.from_object(Config)
+
+CORS(app)
 
 @app.route('/')
 def home():
@@ -51,3 +57,46 @@ def search():
     jobListings=jobPaginator,
     pageURL=pageURL,
     errors=errors)
+
+@app.route('/locations', methods=['GET'])
+@cross_origin()
+def locations():
+  locationInput = request.args.get('locationInp')
+
+  return jsonify(getSuggestedLocations(locationInput))
+
+def getSuggestedLocations(locationInput):
+  """
+  Retrieves location suggestions from HERE Geospatial API.
+
+  Constrained to places in United States of America.
+  """
+
+  pageParams = dict(
+    app_id=app.config['HERE_APP_ID'],
+    app_code=app.config['HERE_APP_CODE'],
+    query=locationInput,
+    maxresults=20,
+    country='USA',
+    language='en',
+    resultType='areas'
+  )
+  pageResponse = requests.get(app.config['HERE_API_URL'], params=pageParams)
+
+  if pageResponse.json().get('suggestions'):
+    suggestions = pageResponse.json()['suggestions']
+    locationsJSON = [sugg for sugg in suggestions if sugg['matchLevel'] == 'city']
+    cityStateList = ['{}, {}'.format(loc['address']['city'], loc['address']['state']) for loc in locationsJSON]
+    cityStateUniqueList = uniqueList(cityStateList)
+
+    return cityStateUniqueList
+
+  return None
+
+def uniqueList(sequence):
+  """
+  Converts a list to a unique set of items and preserves order
+  """
+  seen = set()
+
+  return [item for item in sequence if not (item in seen or seen.add(item))]
