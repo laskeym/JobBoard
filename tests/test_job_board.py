@@ -14,14 +14,14 @@ def test_home_page(client):
   """Check that home page returns"""
   rv = client.get('/')
 
-  assert b'name="query"' in rv.data
+  assert b'name="q"' in rv.data
 
 def test_search_page_live(client):
   """
   Should grab all result divs and make sure there is > 0
   """
 
-  rv = client.post('/search', data=dict(
+  rv = client.get('/search', data=dict(
     query='Software Developer',
     location='Fairfield, NJ'
   ))

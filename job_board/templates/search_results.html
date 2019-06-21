@@ -55,6 +55,9 @@
         </a>
       {% endfor %}
     </ul>
+    <div class="paginator d-flex justify-content-center pt-3 pb-2">
+      {{ jobListings.pager(url=pageURL, link_attr={'class': 'btn btn-outline-primary rounded-0'}, curpage_attr={'class': 'btn btn-primary rounded-0'}) | safe }}
+    </div>
   </div>
 </div>
 {% endblock %}

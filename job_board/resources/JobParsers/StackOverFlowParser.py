@@ -51,7 +51,7 @@ class StackOverflowParser(JobSiteParser):
 
     secondaryInfo = jobListing.find('div', attrs={'class': '-company'})
     jobListingObj.companyName = secondaryInfo.find('span').text
-    jobListingObj.jobLocation = secondaryInfo.find('span', attrs={'class': 'fc-black-500'}).text
+    jobListingObj.jobLocation = secondaryInfo.find('span', attrs={'class': 'fc-black-500'}).text.replace('-', '').strip()
 
     postDateRaw = jobHeaderInfo.find('span', attrs={'class': 'fc-black-500'}).text
     jobListingObj.postDate = dateParserStackOverflow(postDateRaw)
