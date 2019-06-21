@@ -1,5 +1,4 @@
-let baseURL =
-  window.location.protocol + "//" + window.location.hostname + ":5000";
+let baseURL = window.location.protocol + "//" + window.location.hostname;
 
 var autoComplete = new autoComplete({
   selector: 'input[name="l"]',
