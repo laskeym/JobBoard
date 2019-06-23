@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, url_for, jsonify
 from flask_cors import CORS, cross_origin
+from flask_redis import FlaskRedis
 from paginate import Page
 import requests
 
@@ -8,11 +9,13 @@ from job_board.resources.JobSearchQuery import JobSearchQuery
 from job_board.resources.JobParsers.StackOverFlowParser import StackOverflowParser
 from job_board.resources.JobParsers.MonsterParser import MonsterParser
 from job_board.resources.Error import ResponseNotOKError
+from job_board.utilities.decorators import redisMemoize
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 CORS(app)
+client = FlaskRedis(app)
 
 @app.route('/')
 def home():
@@ -27,18 +30,8 @@ def search():
   errors = []
 
   jobSearchQuery = JobSearchQuery(query, location)
-
-  stackOverflow = StackOverflowParser(jobSearchQuery)
-  try:
-    jobListings.extend(stackOverflow.getJobListings())
-  except ResponseNotOKError as err:
-    errors.append(err.printError)
-
-  monster = MonsterParser(jobSearchQuery)
-  try:
-    jobListings.extend(monster.getJobListings())
-  except ResponseNotOKError as err:
-    errors.append(err.printError)
+  memoizedGetAllJobListings = redisMemoize(getAllJobListings)
+  jobListings = memoizedGetAllJobListings(jobSearchQuery)
 
   # Sort job listings by post date
   jobListings.sort(key=lambda jobListing: jobListing.postDate, reverse=True)
@@ -57,6 +50,17 @@ def search():
     jobListings=jobPaginator,
     pageURL=pageURL,
     errors=errors)
+
+def getAllJobListings(jobSearchQueryObj):
+  jobListingResults = []
+
+  stackOverflow = StackOverflowParser(jobSearchQueryObj)
+  jobListingResults.extend(stackOverflow.getJobListings())
+
+  monster = MonsterParser(jobSearchQueryObj)
+  jobListingResults.extend(monster.getJobListings())
+
+  return jobListingResults
 
 @app.route('/locations', methods=['GET'])
 @cross_origin()
