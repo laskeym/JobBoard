@@ -3,6 +3,13 @@ class JobSearchQuery:
     self._jobTitle = jobTitle
     self._jobLocation = jobLocation 
 
+  def __str__(self):
+    return '{}({}, {})'.format(
+      self.__class__.__name__,
+      self.getJobTitle(),
+      self.getJobLocation()
+    )
+
   def getJobTitle(self):
     return self._jobTitle
 
