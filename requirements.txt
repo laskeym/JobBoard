@@ -21,7 +21,7 @@ paginate==0.5.6
 pathlib2==2.3.3
 pkg-resources==0.0.0
 pluggy==0.11.0
-py==1.8.0
+py==1.10.0
 pylint==2.3.1
 pytest==4.5.0
 pytest-cov==2.7.1
