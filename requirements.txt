@@ -42,6 +42,6 @@ typing_extensions==4.4.0
 urllib3==1.26.12
 uWSGI==2.0.20
 wcwidth==0.1.7
-Werkzeug==2.2.2
+Werkzeug==2.2.3
 wrapt==1.11.1
 zipp==3.9.0
